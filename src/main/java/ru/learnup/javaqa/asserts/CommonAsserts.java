@@ -1,8 +1,8 @@
 package ru.learnup.javaqa.asserts;
 
+import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.apache.commons.lang3.ObjectUtils;
 import ru.learnup.javaqa.dto.Category;
 import ru.learnup.javaqa.dto.Product;
 import lombok.experimental.UtilityClass;
@@ -17,6 +17,7 @@ import static ru.learnup.javaqa.asserts.IsProductArray.isProductArray;
 @UtilityClass
 public class CommonAsserts {
 
+    @Step("Убедиться, что продукт из ответа совпадает с продуктом из запроса")
     public void assertProductEquals(Product expected, Product actual) {
         //Для правильного отслеживания ид для удаления
         Long id = actual.getId();
@@ -27,6 +28,7 @@ public class CommonAsserts {
         assertThat(actual.getPrice(), equalTo(expected.getPrice()));
     }
 
+    @Step("Убедиться, что категория из ответа совпадает с категорией из запроса")
     public void assertCategoryEquals(CategoryType expected, Category actual) {
         assertThat(actual.getId(), equalTo(expected.getId()));
         assertThat(actual.getTitle(), equalTo(expected.getName()));
@@ -35,17 +37,20 @@ public class CommonAsserts {
     }
 
     //Проверка на статус 404 после получения запроса
+    @Step("Убедиться, что ответ на запрос - 404 Not Found")
     public void assertNotFound(Response res) {
         assertThat(res.statusCode(), equalTo(404));
         assertThat(res.contentType(), equalTo(ContentType.JSON.toString()));
     }
 
     //Проверка на статус 400 после получения запроса
+    @Step("Убедиться, что ответ на запрос - 400 Bad Request")
     public void assertBadRequest(Response res) {
         assertThat(res.statusCode(), equalTo(400));
         assertThat(res.contentType(), equalTo(ContentType.JSON.toString()));
     }
 
+    @Step("Убедиться, что ответ на запрос - 404 Not Found")
     public void assertProductNotFound(Product p, Response res) {
         //Для правильного отслеживания ид в случае успешного запроса
         Long id;
@@ -57,6 +62,7 @@ public class CommonAsserts {
         assertNotFound(res);
     }
 
+    @Step("Убедиться, что ответ на запрос - 400 Bad Request")
     public void assertProductBadRequest(Product p, Response res) {
         //Для правильного отслеживания ид в случае успешного запроса
         Long id;

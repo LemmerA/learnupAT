@@ -1,5 +1,7 @@
 package ru.learnup.javaqa.tests;
 
+import com.google.common.collect.ImmutableMap;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -18,6 +20,7 @@ import static io.restassured.filter.log.LogDetail.HEADERS;
 import static io.restassured.filter.log.LogDetail.METHOD;
 import static io.restassured.filter.log.LogDetail.URI;
 import static org.hamcrest.CoreMatchers.containsStringIgnoringCase;
+import static com.github.automatedowl.tools.AllureEnvironmentWriter.allureEnvironmentWriter;
 
 public abstract class BaseTest {
 
@@ -36,7 +39,7 @@ public abstract class BaseTest {
     }
 
     //Набор аскии-символов для проверок
-    public static final String asciiCheck = "!;()\"\'.,=+|&#$%*-/:<>?@[]\\^_~`}{";
+    public static final String asciiCheck = "!;()\"'.,=+|&#$%*-/:<>?@[]\\^_~`}{";
 
     //Поток символов для параметризованных тестов
     public static Stream<String> asciiStream() {
@@ -135,8 +138,12 @@ public abstract class BaseTest {
     @SneakyThrows
     @BeforeAll
     static void beforeAll() {
+        RestAssured.filters(new AllureRestAssured());
+
         properties.load(new FileInputStream("src/test/resources/application.properties"));
         RestAssured.baseURI = properties.getProperty("baseURL");
+
+        setAllureEnvironment();
 
         logReqSpec = new RequestSpecBuilder()
                 .log(METHOD)
@@ -172,5 +179,12 @@ public abstract class BaseTest {
 
         RestAssured.requestSpecification = logReqSpec;
         RestAssured.responseSpecification = resSpec;
+    }
+
+    protected static void setAllureEnvironment() {
+        allureEnvironmentWriter(
+                ImmutableMap.<String, String>builder()
+                        .put("URL",properties.getProperty("baseURL"))
+                        .build());
     }
 }
