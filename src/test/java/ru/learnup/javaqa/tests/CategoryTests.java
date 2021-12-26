@@ -184,7 +184,7 @@ public class CategoryTests extends BaseTest{
     void getCategoryEmpty() {
         Response res = getCategoryErr("");
 
-        assertBadRequest(res);
+        assertNotFound(res);
     }
 
     @Test

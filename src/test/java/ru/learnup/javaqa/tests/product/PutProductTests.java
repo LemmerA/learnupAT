@@ -171,6 +171,8 @@ public class PutProductTests extends BaseTest {
     //Id tests
     @Test
     void putProductIdMissing() {
+        prodDouble.setId(null);
+
         Response res = putProductDouble();
 
         assertProductBadRequest(prod, res);
