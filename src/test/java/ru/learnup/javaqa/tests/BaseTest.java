@@ -14,6 +14,9 @@ import java.util.stream.Stream;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
+import ru.learnup.javaqa.db.dao.CategoriesMapper;
+import ru.learnup.javaqa.db.dao.ProductsMapper;
+import ru.learnup.javaqa.utils.DbUtils;
 
 import static io.restassured.filter.log.LogDetail.BODY;
 import static io.restassured.filter.log.LogDetail.HEADERS;
@@ -26,12 +29,16 @@ public abstract class BaseTest {
 
     static Properties properties = new Properties();
     static RequestSpecification logReqSpec;
+    public static RequestSpecification noLogReqSpec;
     static ResponseSpecification resSpec;
 
     public static ResponseSpecification confirmDeleteResSpec;
     public static ResponseSpecification deleteResSpec;
     public static ResponseSpecification categoriesResSpec;
     public static ResponseSpecification productsResSpec;
+
+    public static ProductsMapper productsMapper;
+    public static CategoriesMapper categoriesMapper;
 
     //Генератор случайного инт32
     public Integer randomInt(){
@@ -152,6 +159,9 @@ public abstract class BaseTest {
                 .log(HEADERS)
                 .build();
 
+        noLogReqSpec = new RequestSpecBuilder()
+                .build();
+
         resSpec = new ResponseSpecBuilder()
                 .expectStatusLine(containsStringIgnoringCase("HTTP/1.1"))
                 .build();
@@ -177,14 +187,34 @@ public abstract class BaseTest {
                 .expectStatusCode(404)
                 .build();
 
+
         RestAssured.requestSpecification = logReqSpec;
         RestAssured.responseSpecification = resSpec;
+
+        categoriesMapper = DbUtils.getCategoryMapper();
+        productsMapper = DbUtils.getProductsMapper();
     }
 
     protected static void setAllureEnvironment() {
         allureEnvironmentWriter(
                 ImmutableMap.<String, String>builder()
-                        .put("URL",properties.getProperty("baseURL"))
+                        .put("URL", properties.getProperty("baseURL"))
                         .build());
+    }
+
+    protected static void clearTestData(Long id) {
+        //Если ассерт не вернул ид продукта
+        if (id != null) {
+            //Удаление
+            try {
+                productsMapper.deleteByPrimaryKey(id);
+                System.out.println("Test data deleted successfully. Id: "
+                        + id + "\n");
+            } catch (Exception e){
+                System.out.println("Something went wrong while deleting your save data. " +
+                        "Please delete manually.\n");
+                e.printStackTrace();
+            }
+        }
     }
 }

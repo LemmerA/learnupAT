@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.learnup.javaqa.dto.Product;
-import ru.learnup.javaqa.dto.Products;
+import ru.learnup.javaqa.dto.ProductList;
 import ru.learnup.javaqa.tests.BaseTest;
 
 import static io.qameta.allure.SeverityLevel.*;
@@ -44,7 +44,7 @@ public class GetProductTests extends BaseTest {
     }
 
     @Step("Отправить GET-запрос в корень контроллера продуктов")
-    private Products getProductAll() {
+    private ProductList getProductAll() {
         return given()
                 .response()
                 .spec(productsResSpec)
@@ -52,14 +52,14 @@ public class GetProductTests extends BaseTest {
                 .get(PRODUCT_ENDPOINT)
                 .prettyPeek()
                 .body()
-                .as(Products.class);
+                .as(ProductList.class);
     }
 
     @Severity(CRITICAL)
     @Test
     @Story("Получить все продукты")
     void getAllProducts() {
-        Products res = getProductAll();
+        ProductList res = getProductAll();
 
         assertThat(res.getProducts(), isProductArray());
     }

@@ -2,7 +2,9 @@ package ru.learnup.javaqa.tests.product;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.*;
+import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.learnup.javaqa.dto.ProductDouble;
@@ -1078,18 +1080,6 @@ public class PostProductTests extends BaseTest {
 
     @AfterEach
     void tearDown() {
-        //Если ассерт не вернул ид продукта
-        if (prod.getId() != null) {
-            //Удаление
-            given()
-                    .when()
-                    .delete(PRODUCT_ID_ENDPOINT, prod.getId())
-                    .prettyPeek();
-            //Проверка удаления
-            given()
-                    .when()
-                    .get(PRODUCT_ID_ENDPOINT, prod.getId())
-                    .prettyPeek();
-        }
+        clearTestData(prod.getId());
     }
 }
