@@ -8,6 +8,6 @@ import java.util.List;
 //Класс для сериализации гет-запроса на все продукты
 @Data
 @NoArgsConstructor
-public class Products {
+public class ProductList {
     private List<Product> products;
 }
